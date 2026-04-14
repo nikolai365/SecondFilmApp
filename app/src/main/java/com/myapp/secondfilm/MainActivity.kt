@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.myapp.secondfilm.navigation.SetupNavHost
 import com.myapp.secondfilm.ui.theme.SecondFilmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,54 +30,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SecondFilmTheme {
-                AppNavigation()
+                val navController = rememberNavController()
+                SetupNavHost(navController = navController)
             }
         }
     }
 }
 
-
-@Composable
-fun AppNavigation() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(
-                onNavigateToDetail = { navController.navigate("detail") }
-            )
-        }
-        composable("detail") {
-            DetailScreen()
-        }
-    }
-}
-
-
-@Composable
-fun HomeScreen(
-    onNavigateToDetail: () -> Unit,
-    viewModel: MainViewModel = viewModel()
-) {
-    val text by viewModel.text.collectAsState()
-    Column {
-        Text(text = text)
-        Button(onClick = { viewModel.updateText("Updated in Home!") }) {
-            Text("Update Text")
-        }
-        Button(onClick = onNavigateToDetail) {
-            Text("Go to Detail")
-        }
-    }
-}
-
-
-@Composable
-fun DetailScreen(
-    viewModel: MainViewModel = viewModel()
-) {
-    val text by viewModel.text.collectAsState()
-    Column {
-        Text(text = "Detail Screen")
-        Text(text = "Current text: $text")
-    }
-}
